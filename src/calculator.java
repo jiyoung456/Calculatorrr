@@ -3,11 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.text.DecimalFormat;
 
 public class calculator extends JFrame {
 
     private JTextField inputSpace;
-    private String num = "";i
+    private String num = "";
+    private String prev_operaton = "";
     private ArrayList<String> equation = new ArrayList<String>();
 
     public calculator() {
@@ -59,13 +61,28 @@ public class calculator extends JFrame {
                 }
             }
             else if (operation.equals("=")) {
-                String result = Double.toString(calculate(inputSpace.getText()));
-                inputSpace.setText("" + result);
+                double doubleResult = calculate(inputSpace.getText());
+                String result;
+                //결과 값이 정수인 경우 정수로 반환
+                if (doubleResult == (int)doubleResult) {
+                    result = Integer.toString((int)doubleResult);
+                } else {
+                    result = Double.toString(doubleResult);
+                }
+                inputSpace.setText(result);
                 num = "";
 
+                //연산자 중복 입력 방지
+                // 비어있는 창에 연산자 입력 방지("-"인 경우 제외)
+            }else if (operation.equals("+") || operation.equals("-") || operation.equals("×") || operation.equals("÷")) {
+                if(inputSpace.getText().equals("") && operation.equals("-")){
+                    inputSpace.setText(inputSpace.getText() + e.getActionCommand());
+                } else if (!inputSpace.getText().equals("") && !prev_operaton.equals("+") && !prev_operaton.equals("-") && !prev_operaton.equals("×") && !prev_operaton.equals("÷")) {
+                    inputSpace.setText(inputSpace.getText() + e.getActionCommand());}
             } else {
                 inputSpace.setText(inputSpace.getText() + e.getActionCommand());
             }
+            prev_operaton = e.getActionCommand();
         }
     }
 
@@ -86,6 +103,8 @@ public class calculator extends JFrame {
             }
         }
         equation.add(num);
+        //결과값이 음수인 경우
+        equation.remove("");
     }
 
     public double calculate(String inputText) {
@@ -94,6 +113,9 @@ public class calculator extends JFrame {
         double prev = 0;
         double current = 0;
         String mode = "";
+
+        //결과값이 소수일 경우, 소수점 아래 열 번째까지 표시되게
+        DecimalFormat df = new DecimalFormat("#.##########");
 
         for (String s : equation) {
             if (s.equals("+")) {
@@ -119,8 +141,15 @@ public class calculator extends JFrame {
                 }
             }
         }
-        return prev;
+        String result;
+        if (prev == (int)prev) {
+            result = Integer.toString((int)prev);
+        } else {
+            result = df.format(prev);
+        }
+        return Double.valueOf(result);
     }
+
 
     public static void main(String[] args) {
         new calculator();
