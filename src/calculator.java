@@ -128,7 +128,17 @@ public class calculator extends JFrame {
                 } else if (!inputSpace.getText().equals("") && !prev_operaton.equals("+") && !prev_operaton.equals("-") && !prev_operaton.equals("×") && !prev_operaton.equals("÷")) {
                     inputSpace.setText(inputSpace.getText() + e.getActionCommand());
                 }
-            } else {
+            } else if (operation.equals("+/-")) {
+                if (!inputSpace.getText().equals("")) {
+                    String inputText = inputSpace.getText();
+                   String[] splitted = inputText.split("(?<=[-+*/])|(?=[-+*/])");
+                    int lastIndex = splitted.length - 1;
+                    double currentValue = Double.parseDouble(splitted[lastIndex]);
+                    currentValue = -currentValue;
+                    splitted[lastIndex] = df.format(currentValue);
+                    inputSpace.setText(String.join("", splitted));
+                }
+                }else {
                 inputSpace.setText(inputSpace.getText() + e.getActionCommand());
             }
             prev_operaton = e.getActionCommand();
